@@ -1,0 +1,15 @@
+# VS
+.vscode/
+.vs/
+*.user
+
+# .NET build
+[Bb]in/
+[Oo]bj/
+
+# Azurite
+__blobstorage__/
+__queuestorage__/
+__tablestorage__/
+obj/Debug//net8.0/__azurite_db_*
+__azurite_db_*
