@@ -60,5 +60,22 @@ namespace AzureBlobApp.Controllers
             if (success) return Ok($"Файл '{blobName}' успішно видалено.");
             return NotFound($"Файл '{blobName}' не знайдено.");
         }
+
+        // POST api/blob/upload-images
+        [HttpPost("upload-images")]
+        public async Task<IActionResult> UploadImageForProcessing(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Файл не вибрано.");
+
+            using var stream = file.OpenReadStream();
+            var uri = await _blobService.UploadImageAsync(file.FileName, stream);
+            
+            return Ok(new 
+            { 
+                Message = "Зображення успішно завантажено у 'big-images'. Завдання на стиснення відправлено в чергу!", 
+                Uri = uri 
+            });
+        }
     }
 }

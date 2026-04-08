@@ -1,12 +1,14 @@
 using AzureBlobApp.Services;
+using AzureBlobApp.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddSingleton(new AzureBlobService("UseDevelopmentStorage=true"));
+
+builder.Services.AddHostedService<ImageProcessingBackgroundService>();
 
 var app = builder.Build();
 

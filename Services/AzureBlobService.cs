@@ -1,16 +1,21 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Queues;
+using System.Text;
 
 namespace AzureBlobApp.Services
 {
     public class AzureBlobService
     {
         private readonly BlobServiceClient _blobServiceClient;
+        private readonly QueueServiceClient _queueServiceClient;
 
         public AzureBlobService(string connectionString)
         {
             _blobServiceClient = new BlobServiceClient(connectionString);
+            _queueServiceClient = new QueueServiceClient(connectionString);
         }
+
 
         public async Task<bool> CreateContainerAsync(string containerName)
         {
@@ -21,7 +26,7 @@ namespace AzureBlobApp.Services
                 return true;
             }
             catch (Exception ex)
-      {
+            {
                 Console.WriteLine($"[CONTAINER CREATION ERROR]: {ex.Message}\n");
                 return false;
             }
@@ -61,6 +66,34 @@ namespace AzureBlobApp.Services
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(blobName);
             return await blobClient.DeleteIfExistsAsync();
+        }
+
+        public async Task<string> UploadImageAsync(string fileName, Stream content)
+        {
+            try
+            {
+                string containerName = "big-images";
+                string queueName = "new-images";
+
+                BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+                await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+                BlobClient blobClient = containerClient.GetBlobClient(fileName);
+                await blobClient.UploadAsync(content, overwrite: true);
+
+                QueueClient queueClient = _queueServiceClient.GetQueueClient(queueName);
+                await queueClient.CreateIfNotExistsAsync();
+
+                string base64Message = Convert.ToBase64String(Encoding.UTF8.GetBytes(fileName));
+                await queueClient.SendMessageAsync(base64Message);
+
+                return blobClient.Uri.ToString();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[IMAGE PROCESSING ERROR]: {ex.Message}\n");
+                throw;
+            }
         }
     }
 }
