@@ -13,3 +13,4 @@ __queuestorage__/
 __tablestorage__/
 obj/Debug//net8.0/__azurite_db_*
 __azurite_db_*
+AzuriteConfig
