@@ -18,7 +18,7 @@ namespace AzureBlobApp.Controllers
         [HttpPost("container/{containerName}")]
         public async Task<IActionResult> CreateContainer(string containerName)
         {
-            var success = await _blobService.CreateContainer(containerName);
+            var success = await _blobService.CreateContainerAsync(containerName);
             if (success) return Ok($"Контейнер '{containerName}' успішно створено.");
             return BadRequest("Помилка при створенні контейнера.");
         }
@@ -27,7 +27,7 @@ namespace AzureBlobApp.Controllers
         [HttpDelete("container/{containerName}")]
         public async Task<IActionResult> DeleteContainer(string containerName)
         {
-            var success = await _blobService.DeleteContainer(containerName);
+            var success = await _blobService.DeleteContainerAsync(containerName);
             if (success) return Ok($"Контейнер '{containerName}' успішно видалено.");
             return NotFound($"Контейнер '{containerName}' не знайдено.");
         }
@@ -40,7 +40,7 @@ namespace AzureBlobApp.Controllers
                 return BadRequest("Файл не вибрано.");
 
             using var stream = file.OpenReadStream();
-            var uri = await _blobService.UploadBlob(containerName, file.FileName, stream);
+            var uri = await _blobService.UploadBlobAsync(containerName, file.FileName, stream);
             return Ok(new { Message = "Файл успішно завантажено.", Uri = uri });
         }
 
@@ -48,7 +48,7 @@ namespace AzureBlobApp.Controllers
         [HttpGet("{containerName}/list")]
         public async Task<IActionResult> ListBlobs(string containerName)
         {
-            var blobs = await _blobService.ListBlobs(containerName);
+            var blobs = await _blobService.ListBlobsAsync(containerName);
             return Ok(blobs);
         }
 
@@ -56,7 +56,7 @@ namespace AzureBlobApp.Controllers
         [HttpDelete("{containerName}/{blobName}")]
         public async Task<IActionResult> DeleteBlob(string containerName, string blobName)
         {
-            var success = await _blobService.DeleteBlob(containerName, blobName);
+            var success = await _blobService.DeleteBlobAsync(containerName, blobName);
             if (success) return Ok($"Файл '{blobName}' успішно видалено.");
             return NotFound($"Файл '{blobName}' не знайдено.");
         }

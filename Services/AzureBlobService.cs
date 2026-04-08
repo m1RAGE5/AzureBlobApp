@@ -12,7 +12,7 @@ namespace AzureBlobApp.Services
             _blobServiceClient = new BlobServiceClient(connectionString);
         }
 
-        public async Task<bool> CreateContainer(string containerName)
+        public async Task<bool> CreateContainerAsync(string containerName)
         {
             try
             {
@@ -27,13 +27,13 @@ namespace AzureBlobApp.Services
             }
         }
 
-        public async Task<bool> DeleteContainer(string containerName)
+        public async Task<bool> DeleteContainerAsync(string containerName)
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             return await containerClient.DeleteIfExistsAsync();
         }
 
-        public async Task<string> UploadBlob(string containerName, string blobName, Stream content)
+        public async Task<string> UploadBlobAsync(string containerName, string blobName, Stream content)
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(blobName);
@@ -41,7 +41,7 @@ namespace AzureBlobApp.Services
             return blobClient.Uri.ToString();
         }
 
-        public async Task<List<string>> ListBlobs(string containerName)
+        public async Task<List<string>> ListBlobsAsync(string containerName)
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             List<string> blobNames = new List<string>();
@@ -56,7 +56,7 @@ namespace AzureBlobApp.Services
             return blobNames;
         }
 
-        public async Task<bool> DeleteBlob(string containerName, string blobName)
+        public async Task<bool> DeleteBlobAsync(string containerName, string blobName)
         {
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = containerClient.GetBlobClient(blobName);
