@@ -68,7 +68,7 @@ protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 
             // Зміна розміру за допомогою SixLabors.ImageSharp
             using var image = await Image.LoadAsync(memoryStream, stoppingToken);
-            image.Mutate(x => x.Resize(100, 0)); // Ширина 100px, висота - авто
+            image.Mutate(x => x.Resize(200, 0)); // Ширина 200px, висота - авто
 
             using var outStream = new MemoryStream();
             await image.SaveAsJpegAsync(outStream, cancellationToken: stoppingToken);
